@@ -42,29 +42,7 @@ Please report it at https://github.com/jh220/discord-clearchatbot/issues :heart:
 	}
 });
 
-var count = 1;
-
-function setActivity() {
-    var display = "jh220.de/dc";
-
-    if(count == 1 || count == 2) {
-        var servers = client.guilds.cache.size;
-        servers = servers.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
-        display = `${servers} servers`;
-    } else if(count == 3) {
-        var members = 0; client.guilds.cache.each(guild => members += guild.memberCount);
-        members = members.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
-        display = `${members} users`;
-    } else if(count == 4) count = 0;
-
-    count++;
-    client.user.setActivity(`cc help | ${display}`, {type: 'WATCHING'});
-}
-
 client.once('ready', () => {
-    setActivity;
-    setInterval(setActivity, 15000);
-
     const time = new Date().getMilliseconds();
     console.log(`Bot started! Startup process took ${time}ms.`);
 });

@@ -30,7 +30,12 @@ module.exports = {
             }).then(prunedMessages => {
                 const count = `${prunedMessages.size} message${prunedMessages.size != 1 ? 's' : ''}`;
                 const byUser = user ? ` from ${user}` : '';
-                message.channel.send(`${message.author} deleted ${count} in this channel${byUser}.`);
+                message.channel.send(`
+${message.author} deleted ${count} in this channel${byUser}.
+
+**Note:** This command is outdated. Please use */clear*
+If this doesn't exist, please read the instructions in the *cc help* command.
+`);
             });
     },
 };

@@ -22,7 +22,8 @@ The commands of the ClearChat bot with the prefix "cc " are outdated and are no 
 However, you can still use them, but we recommend using the interaction "/clear".
 
 If the interactions do not exist, then the bot did not have sufficient rights when it was invited.
-So please remove the bot and invite it again via the URL https://jh220.de/ccbot!
+To fix that problem, you need to open to the [invite link](https://jh220.de/ccbot) and invite the bot again.
+Important: You do not have to remove the bot from the server, it is only necessary to re-invite the bot.
 Thank you for your understanding!
 
 With kind regards

@@ -1,9 +1,9 @@
 import { REST, Routes } from 'discord.js';
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
-const { clientId, token, adminServerId } = require('../config.json');
+const { clientId, token, adminServerId } = require('../../config.json');
 
-const commands : any = [];
+const commands : JSON[] = [];
 const foldersPath = join(__dirname, '../commands');
 const commandFolders = readdirSync(foldersPath);
 

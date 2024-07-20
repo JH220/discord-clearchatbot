@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { PermissionFlagsBits } from 'discord.js';
+import { ChatInputCommandInteraction, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
+import { CustomClient } from '../../bot';
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -17,8 +18,20 @@ module.exports = {
 		.addRoleOption(option => option.setName('role').setDescription('Filter messages from a specific role'))
 		.addBooleanOption(option => option.setName('bot').setDescription('Filter messages sent by bots')),
 	/** @param {import('discord.js').CommandInteraction} interaction */
-	async execute(interaction) {
+	async execute(interaction : ChatInputCommandInteraction) {
+		const database = new (require('../../utils/database'))();
 		const amount = interaction.options.getInteger('amount') || 100;
+
+		const permissions = interaction.channel.permissionsFor(interaction.client.user);
+
+		// Checking permissions for feedback to the user which permission is missing
+		if (!permissions.has(PermissionsBitField.Flags.ManageMessages))
+			return await database.reply(interaction, 'COMMAND_CLEAR_MISSING_PERMS', { 'PERMISSION': 'Manage Messages' });
+		else if (!permissions.has(PermissionsBitField.Flags.ViewChannel))
+			return await database.reply(interaction, 'COMMAND_CLEAR_MISSING_PERMS', { 'PERMISSION': 'View Channel' });
+		else if (!permissions.has(PermissionsBitField.Flags.ReadMessageHistory))
+			return await database.reply(interaction, 'COMMAND_CLEAR_MISSING_PERMS', { 'PERMISSION': 'Read Message History' });
+
 		let fetched = await interaction.channel.messages.fetch({ limit: amount });
 		fetched = fetched.filter(message => message.deletable);
 		fetched = fetched.filter(message => !message.pinned);
@@ -28,18 +41,18 @@ module.exports = {
 		if (user) fetched = fetched.filter(message => message.author.id == user.id);
 		// Filter messages from a specific role if specified
 		const role = interaction.options.getRole('role');
-		if (role) fetched = fetched.filter(message => message.member && message.member.roles.cache.has(role));
+		if (role) fetched = fetched.filter(message => message.member && message.member.roles.cache.has(role.id));
 		// Filter messages from bots if specified
 		const bot = interaction.options.getBoolean('bot');
 		if (bot) fetched = fetched.filter(message => message.member && message.member.user.bot);
 
 		try {
 			const messages = await interaction.channel.bulkDelete(fetched, true);
-			await interaction.reply(`Successfully deleted ${messages.size} messages.`);
+			await database.reply(interaction, 'COMMAND_CLEAR_SUCCESS', { 'AMOUNT': messages.size, 's': messages.size == 1 ? '' : 's' }, false);
 		}
 		catch (error) {
-			interaction.client.error(error);
-			await interaction.reply({ content: 'There was an error while clearing messages\nPlease check if the bot has all the neccessary permissions!', ephemeral: true });
+			(interaction.client as CustomClient).ierror(interaction, error, 'Error while bulk deleting messages');
+			await database.reply(interaction, 'COMMAND_CLEAR_BULK_DELETE_ERROR');
 		}
 	},
 };

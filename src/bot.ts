@@ -1,26 +1,33 @@
-import { Client, Collection, GatewayIntentBits } from 'discord.js';
+import { Client, Collection, GatewayIntentBits, Interaction } from 'discord.js';
 import { Logger } from './utils/logger';
 
 export class CustomClient extends Client implements Logger {
 	commands: Collection<string, any>;
 
-	log(message) {
+	log(message : string) {
 		this._sendLog('info', message);
 	}
-	warn(message) {
+	warn(message : string) {
 		this._sendLog('warn', message);
 	}
-	debug(message) {
+	debug(message : string) {
 		this._sendLog('debug', message);
 	}
-	error(message) {
+	error(message : string) {
 		this._sendLog('error', message);
 	}
-	trace(message) {
+	trace(message : string) {
 		this._sendLog('trace', message);
 	}
 
-	_sendLog(level, message) {
+	ierror(interaction : Interaction, error : Error = null, message : string = '') {
+		this.error(`[Interaction ${interaction.id}] ${message ? message : 'Error while executing interaction'}: ${error}${error?.stack ? `\n${error.stack}` : ''}`);
+	}
+	idebug(interaction : Interaction, message : string) {
+		this.debug(`[Interaction ${interaction.id}] ${message}`);
+	}
+
+	_sendLog(level : string, message : string) {
 		this.shard.send({ type: 'log', level: level, log: message });
 	}
 }

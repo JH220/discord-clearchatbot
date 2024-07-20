@@ -9,6 +9,7 @@ module.exports = class database {
 	constructor() {
 		if (database.instance instanceof database) return database.instance;
 		database.instance = this;
+		return this;
 	}
 
 	async setup(logger: Logger) : Promise<Sequelize> {
@@ -16,7 +17,7 @@ module.exports = class database {
 		if (this.connection) return this.connection;
 
 		logger.debug('Connecting to database...');
-		this.connection = await new Sequelize(require('../../config.json').database, { logging: msg => logger.trace(msg) });
+		this.connection = await new Sequelize(require('../../config.json').database, { logging: msg => logger.trace('[Sequelize] ' + msg) });
 
 		logger.debug('Syncing models...');
 		const modelFiles = require('node:fs').readdirSync('./dist/models').filter(file => file.endsWith('.js'));
@@ -51,7 +52,7 @@ module.exports = class database {
 		return dbInteraction;
 	}
 
-	async reply(interaction : ChatInputCommandInteraction, result : string, args : Array<any> = null, reply : boolean = true) : Promise<boolean> {
+	async reply(interaction : ChatInputCommandInteraction, result : string, args : { [key: string]: string } = null, reply : boolean = true) : Promise<boolean> {
 		if (!interaction.isChatInputCommand()) return false;
 
 		const Interaction = this.connection.models.Interaction;
@@ -67,22 +68,33 @@ module.exports = class database {
 
 		await Interaction.update({ result: result, args: args ? JSON.stringify(args) : null }, { where: { interactionId: interaction.id } });
 
+		const argString = (args && args.length ? ' with args ' + (Object.keys(args).map(key => `"${key}": "${args[key]}"`).join(', ')) : '');
+		if (!reply) {
+			this.logger.debug(`[Interaction ${interaction.id}] Logged result ${result}${argString}.`);
+			return true;
+		}
+
 		let message;
 
 		try {
 			message = await this.getMessage(result, interaction, args);
 		}
 		catch (error) {
-			this.logger.error(`[Interaction ${interaction.id}] Failed to get message for ${result}.`);
+			this.logger.warn(`[Interaction ${interaction.id}] Message ${result} not found in messages.json.`);
+			message = result;
+		}
+
+		try {
+			if (interaction.deferred) await interaction.editReply(message);
+			else if (interaction.isRepliable()) await interaction.reply({ content: message, ephemeral: true });
+			else return false;
+		}
+		catch (error) {
+			this.logger.error(`[Interaction ${interaction.id}] Failed to reply with message ${result}.${error.stack ? `\n${error.stack}` : ''}`);
 			return false;
 		}
 
-		if (!reply) return true;
-		if (interaction.deferred) await interaction.editReply(message);
-		else if (interaction.isRepliable()) await interaction.reply({ content: message, ephemeral: true });
-		else return false;
-
-		this.logger.debug(`[Interaction ${interaction.id}] Replied with message ${result}.`);
+		this.logger.debug(`[Interaction ${interaction.id}] Replied with message ${result}${argString}.`);
 		return true;
 	}
 
@@ -137,21 +149,26 @@ module.exports = class database {
 		return dbUser;
 	}
 
-	async getMessage(key : string, interaction: DInteraction = null, args : Array<any> = null) : Promise<string> {
+	async getMessage(key : string, interaction: DInteraction = null, args : { [key: string]: string } = null) : Promise<string> {
 		const messages = require('../../messages.json');
 
-		if (!Object.prototype.hasOwnProperty.call(messages, key)) {
-			this.logger.warn(`Message ${key} not found in messages.json.`);
+		if (!Object.prototype.hasOwnProperty.call(messages, key))
 			throw 'INVALID_KEY';
-		}
 
 		let message : string = messages[key];
 
 		if (args)
-			for (let i = 0; i < args.length; i++)
-				message = message.replace(`{${i}}`, args[i]);
+			for (const arg in args)
+				message = message.replace(`{${arg}}`, args[arg]);
 
-		if (interaction) {
+		const missingArgs = message.matchAll(/{(\w+)}/g);
+		const missing : boolean = !missingArgs.next().done;
+		for (const match of missingArgs) {
+			const arg = match[1];
+			this.logger.warn(`${interaction ? '[Interaction ${interaction.id}] ' : ''}Message ${key} is missing argument "${arg}".`);
+		}
+
+		if (interaction && missing) {
 			message = message.replace('{INTERACTION_ID}', interaction.id);
 			if (interaction.channel) message = message.replace('{CHANNEL_ID}', interaction.channel.id).replace('{CHANNEL_NAME}', interaction.channel.name);
 			message = message.replace('{USER_ID}', interaction.user.id).replace('{USER_NAME}', interaction.user.username);

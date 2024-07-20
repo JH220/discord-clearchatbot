@@ -3,12 +3,13 @@ Important: This file/data is only for illustration purposes to show how the actu
 {
     "token": "INSERT_YOUR_BOT_TOKEN_HERE",
     "clientId": "INSERT_YOUR_CLIENT_ID_HERE",
-    "database": "mysql://user:pass@host:3306/dbname",
+    "database": "mysql://user:pass@host:3306/dbname", // Unterstützt auch SQLite, PostgreSQL
     "adminServerId": "789235487676170261",
+	"supportServerURL": "https://github.com/jh220de/ccbot", // Normalerweise discord.gg Link zum Support Discord Server
     "log": {
         "level": "debug", // Lowest debug level (for example debug or info)
         "webhook": "https://discord.com/api/webhooks/1234567890398242133/Q7uhb8amYfQ2LFJKwmrD.xQ5RDWuHgqcsK4QNv5aG8e2AHE9rLHcX3zEPgVwbwLw4Ape",
-        "logtail": "INSERT_YOUR_BETTERSTACK_LOGTAIL_TOKEN_HERE"
+        "logtail": "INSERT_YOUR_BETTERSTACK_LOGTAIL_TOKEN_HERE" // https://betterstack.com/logs
     },
     "topgg": {
         "enabled": false,

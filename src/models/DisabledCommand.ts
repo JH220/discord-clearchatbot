@@ -2,7 +2,7 @@ import { Sequelize } from 'sequelize';
 
 const { DataTypes, Model } = require('sequelize');
 
-module.exports = class DisabledCommands extends Model {
+module.exports = class DisabledCommand extends Model {
 	static init(sequelize : Sequelize) {
 		return super.init({
 			commandName: {

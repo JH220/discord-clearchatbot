@@ -1,0 +1,17 @@
+{
+	"COMMAND_ADMIN_INVALID_ID": "No entry with the ID `{ID}` was found in the database.",
+	"COMMAND_GLOBAL_DISABLED": "Unfortunately, this command has been disabled.\nPlease try again later.\nReason: {REASON}\nFor more information, visit our [Discord support server](https://discord.gg/HW9tA4Mp3b).",
+	"COMMAND_GLOBAL_USER_BANNED": "Hey, you are banned.\nReason: {REASON}\nIf you think you have not done anything wrong, you can go on [our discord server](https://discord.gg/HW9tA4Mp3b) and provide the following ban id: %BAN_ID%",
+	"COMMAND_GLOBAL_GUILD_BANNED": "Hey, this server is banned.\nReason: {REASON}\nIf you think this is a mistake, you can go on [our discord server](https://discord.gg/HW9tA4Mp3b) and provide the following ban id: %BAN_ID%",
+	"COMMAND_CLEAR_MISSING_PERMS": "You do not have the necessary permissions to execute this command.\nMissing permission: {PERMISSION}\nIf you need help, please visit our [Discord support server](https://discord.gg/HW9tA4Mp3b).",
+	"COMMAND_CLEAR_BULK_DELETE_ERROR": "There was an error while clearing messages.\nPlease check if the bot has all the neccessary permissions!\nIf you need help, please visit our [Discord support server](https://discord.gg/HW9tA4Mp3b).",
+	"COMMAND_CLEAR_SUCCESS": "Successfully deleted {AMOUNT} message{s}.",
+	"COMMAND_CLEARALL_INVALID_CHANNEL": "This command can only be used in a server text channel.",
+	"COMMAND_CLEARALL_ERROR": "There was an error while clearing this channel.\nPlease check if the bot has all the neccessary permissions!\nIf you need help, please visit our [Discord support server](https://discord.gg/HW9tA4Mp3b).",
+	"COMMAND_CLEARALL_PENDING": "Deleting channel...",
+	"COMMAND_CLEARALL_SUCCESS": "{USER} deleted all messages in this channel.",
+	"COMMAND_PING": "Pong!\nShard {SHARD} | {PING} ms",
+	"COMMAND_VOTE_EMBED": "Hey, you can vote via [this link](https://jh220.de/cc/vote).\nThis will give you access to new cool features.\n\nIf you want to invite the bot to your server, click on [this link](https://discord.com/oauth2/authorize?client_id=787789079227006976&permissions=484432&redirect_uri=https%3A%2F%2Fwww.jh220.de&scope=bot%20applications.commands).\nIf you need help with the bot, please visit our [Discord support server](https://discord.gg/HW9tA4Mp3b).",
+	"ERROR_EXECUTE": "There was an error while executing this command!\nPlease report it to: https://github.com/JH220/discord-clearchatbot/issues/new?title=Interaction-ID%3A+%INTERACTION_ID%&template=command_error.md\nInteraction-ID: **{INTERACTION_ID}**\nFor more information, visit our [Discord support server](https://discord.gg/HW9tA4Mp3b).",
+	"SETTINGS_EMBED": "This is the settings page of the ClearChat bot.\nYou can select a setting from the drop-down menu below this message and then enable or disable it.\nThe updated setting will immediately appear updated in the message, so you can make further adjustments.\nTo reset all settings to their default values, click \"Reset all settings\" there."
+}

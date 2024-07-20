@@ -1,20 +1,24 @@
-import { Events } from 'discord.js';
+import { ChatInputCommandInteraction, Events, Interaction } from 'discord.js';
+import { CustomClient } from '../bot';
 
 module.exports = {
 	name: Events.InteractionCreate,
-	async execute(interaction) {
+	async execute(interaction : Interaction) {
 		if (!interaction.isChatInputCommand()) return;
 
-		const command = interaction.client.commands.get(interaction.commandName);
+		interaction = interaction as ChatInputCommandInteraction;
+		const client = interaction.client as CustomClient;
+
+		const command = client.commands.get(interaction.commandName);
 
 		if (!command) {
-			interaction.client.error(`No command matching ${interaction.commandName} was found.`);
+			client.error(`No command matching ${interaction.commandName} was found.`);
 			return;
 		}
 
 		const database = new (require('../utils/database'))();
 		if (!database.getConnection()) {
-			interaction.client.error(`[Interaction ${interaction.id}] Failed to connect to the database.`);
+			client.error(`[Interaction ${interaction.id}] Failed to connect to the database.`);
 			interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
 			return;
 		}
@@ -24,34 +28,26 @@ module.exports = {
 			await database.addInteraction(interaction);
 		}
 		catch (error) {
-			interaction.client.error(`[Interaction ${interaction.id}] Failed to add interaction to the database`);
+			client.error(`[Interaction ${interaction.id}] Failed to add interaction to the database`);
 			interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
 			return;
 		}
 
 		const bannedUser = await models.UserBan.findOne({ where: { userId: interaction.user.id, pardonModId: null } });
-		if (bannedUser) return database.reply(interaction, 'USER_BANNED', { 'REASON': bannedUser.reason, 'BAN_ID': bannedUser.banId });
+		if (bannedUser) return database.reply(interaction, 'COMMAND_GLOBAL_USER_BANNED', { 'REASON': bannedUser.reason, 'BAN_ID': 'BU' + bannedUser.banId });
 		if (interaction.inGuild()) {
-			const bannedGuild = await models.GuildBan.findOne({ where: { guildId: interaction.guildId, pardonModId: null } });
-			if (bannedGuild) return database.reply(interaction, 'GUILD_BANNED', { 'REASON': bannedUser.reason, 'BAN_ID': bannedGuild.banId });
+			const bannedGuild = await models.ServerBan.findOne({ where: { serverId: interaction.guildId, pardonModId: null } });
+			if (bannedGuild) return database.reply(interaction, 'COMMAND_GLOBAL_GUILD_BANNED', { 'REASON': bannedGuild.reason, 'BAN_ID': 'BG' + bannedGuild.banId });
 		}
+		const disabledCommand = await models.DisabledCommand.findOne({ where: { commandName: interaction.commandName } });
+		if (disabledCommand) return database.reply(interaction, 'COMMAND_GLOBAL_DISABLED', { 'REASON': disabledCommand.reason, 'MOD_ID': disabledCommand.modId });
 
 		try {
 			await command.execute(interaction);
 		}
 		catch (error) {
-			interaction.client.error(`[Interaction ${interaction.id}] ${error.message}`);
-			try {
-				if (interaction.replied || interaction.deferred) {
-					await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
-				}
-				else {
-					await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-				}
-			}
-			catch {
-				interaction.client.error(`[Interaction ${interaction.id}] Failed to deliver the error message to the user.`);
-			}
+			client.ierror(interaction, error, 'Error while executing command');
+			database.reply(interaction, 'ERROR_EXECUTE');
 		}
 	},
 };

@@ -2,7 +2,7 @@ import { Sequelize } from 'sequelize';
 
 const { DataTypes, Model } = require('sequelize');
 
-module.exports = class GuildBan extends Model {
+module.exports = class ServerBan extends Model {
 	static init(sequelize : Sequelize) {
 		return super.init({
 			banId: {
@@ -10,7 +10,7 @@ module.exports = class GuildBan extends Model {
 				autoIncrement: true,
 				primaryKey: true,
 			},
-			guildId: { type: DataTypes.STRING(18) },
+			serverId: { type: DataTypes.STRING(18) },
 			reason: { type: DataTypes.TEXT, allowNull: false },
 			modId: { type: DataTypes.STRING(18) },
 			pardonReason: { type: DataTypes.TEXT, allowNull: true, defaultValue: null },

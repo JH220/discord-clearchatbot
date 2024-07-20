@@ -1,12 +1,12 @@
 {
   "name": "clearchatbot",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "A feature-rich moderation bot of your Discord server for channel management and structuring your chat.",
   "main": "./dist/index.js",
   "scripts": {
     "prod": "node .",
     "dev": "nodemon",
-    "deploy": "node dist/deploy-commands.js",
+    "deploy": "node dist/utils/deploy-commands.js",
     "build": "tsc",
     "watch": "tsc -w",
     "validate": "eslint . --ignore-pattern \"dist/*\"",
@@ -25,21 +25,21 @@
   },
   "homepage": "https://github.com/JH220de/ccbot#readme",
   "dependencies": {
-    "@logtail/pino": "^0.4.21",
-    "discord.js": "^14.15.2",
-    "mysql2": "^3.10.0",
-    "pino": "^9.1.0",
+    "@logtail/pino": "^0.4.22",
+    "discord.js": "^14.15.3",
+    "mysql2": "^3.10.3",
+    "pino": "^9.3.1",
     "pino-discord-webhook": "^0.1.1",
     "sequelize": "^6.37.3",
     "topgg-autoposter": "^2.0.2"
   },
   "devDependencies": {
-    "@eslint/js": "^9.4.0",
+    "@eslint/js": "^9.7.0",
     "@types/eslint__js": "^8.42.3",
     "eslint": "^8.57.0",
-    "nodemon": "^3.1.0",
-    "pino-pretty": "^11.1.0",
-    "typescript": "^5.4.5",
-    "typescript-eslint": "^7.11.0"
+    "nodemon": "^3.1.4",
+    "pino-pretty": "^11.2.1",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^7.16.1"
   }
 }

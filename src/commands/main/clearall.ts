@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { ChannelType, PermissionFlagsBits } from 'discord.js';
+import { ChannelType, ChatInputCommandInteraction, PermissionFlagsBits } from 'discord.js';
+import { CustomClient } from '../../bot';
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -8,8 +9,11 @@ module.exports = {
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
 		.setDMPermission(false),
 	/** @param {import('discord.js').CommandInteraction} interaction */
-	async execute(interaction) {
-		if (interaction.channel.type !== ChannelType.GuildText) return await interaction.reply({ content: 'This command can only be used in a server text channel.', ephemeral: true });
+	async execute(interaction : ChatInputCommandInteraction) {
+		const database = new (require('../../utils/database'))();
+
+		if (interaction.channel.type !== ChannelType.GuildText)
+			return await database.reply(interaction, 'COMMAND_CLEARALL_INVALID_CHANNEL');
 
 		var channel;
 
@@ -18,11 +22,20 @@ module.exports = {
 			await interaction.channel.delete();
 		}
 		catch (error) {
-			interaction.client.error(error);
-			return await interaction.reply({ content: 'There was an error while clearing this channel\nPlease check if the bot has all the neccessary permissions!', ephemeral: true });
+			(interaction.client as CustomClient).ierror(interaction, error, 'Error while cloning and deleting channel');
+			return await database.reply(interaction, 'COMMAND_CLEARALL_ERROR');
 		}
 
-		await interaction.reply({ content: 'Deleting channel...', ephemeral: true });
-		await channel.send(`<@${interaction.user.id}> deleted all messages in this channel.`);
+		await database.reply(interaction, 'COMMAND_CLEARALL_PENDING');
+
+		try {
+			const message = database.getMessage('COMMAND_CLEARALL_SUCCESS', interaction, { 'USER': `<@${interaction.user.id}>` });
+			await channel.send(message);
+			await database.reply(interaction, 'COMMAND_CLEARALL_SUCCESS', { 'CHANNEL': `<#${channel.id}>` }, false);
+		}
+		catch (error) {
+			(interaction.client as CustomClient).ierror(interaction, error, 'Error while sending message to new channel');
+			await database.reply(interaction, 'COMMAND_CLEARALL_MESSAGE_ERROR', {}, false);
+		}
 	},
 };

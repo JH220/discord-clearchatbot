@@ -28,6 +28,7 @@
     "@logtail/pino": "^0.4.22",
     "@sequelize/postgres": "^7.0.0-alpha.41",
     "discord.js": "^14.15.3",
+    "express": "^4.19.2",
     "mysql2": "^3.10.3",
     "pino": "^9.3.1",
     "pino-discord-webhook": "^0.1.1",

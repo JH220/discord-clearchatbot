@@ -17,7 +17,16 @@ module.exports = class database {
 		if (this.connection) return this.connection;
 
 		logger.debug('Connecting to database...');
-		this.connection = await new Sequelize(require('../../config.json').database, { logging: msg => logger.trace('[Sequelize] ' + msg) });
+
+		const connectionString : string = require('../../config.json').database;
+
+		if (connectionString.startsWith('postgres://'))
+			this.connection = await new Sequelize(connectionString, {
+				ssl: false,
+				logging: msg => logger.trace('[Sequelize] ' + msg),
+			});
+		else
+			this.connection = await new Sequelize(connectionString, { logging: msg => logger.trace('[Sequelize] ' + msg) });
 
 		logger.debug('Syncing models...');
 		const modelFiles = require('node:fs').readdirSync('./dist/models').filter(file => file.endsWith('.js'));

@@ -1,0 +1,24 @@
+services:
+  server:
+    build:
+      context: .
+    environment:
+      NODE_ENV: production
+    ports:
+      - 1337:1337
+    volumes:
+      - ./config.json:/usr/src/app/config.json:ro
+      - ./ccbot.log:/usr/src/app/ccbot.log:rw
+    depends_on:
+      - db
+  db:
+    image: postgres
+    restart: always
+    user: postgres
+    environment:
+      - POSTGRES_DB=clearchat
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    expose:
+      - 5432

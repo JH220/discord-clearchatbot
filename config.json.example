@@ -3,7 +3,7 @@ Important: This file/data is only for illustration purposes to show how the actu
 {
     "token": "INSERT_YOUR_BOT_TOKEN_HERE",
     "clientId": "INSERT_YOUR_CLIENT_ID_HERE",
-    "database": "mysql://user:pass@host:3306/dbname", // Unterstützt auch SQLite, PostgreSQL
+    "database": "postgres://postgres:password@db:5432/clearchat", // "mysql://root:password@localhost:3306/clearchat"
     "adminServerId": "789235487676170261",
 	"supportServerURL": "https://github.com/jh220de/ccbot", // Normalerweise discord.gg Link zum Support Discord Server
     "log": {

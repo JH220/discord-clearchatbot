@@ -26,10 +26,12 @@
   "homepage": "https://github.com/JH220de/ccbot#readme",
   "dependencies": {
     "@logtail/pino": "^0.4.22",
+    "@sequelize/postgres": "^7.0.0-alpha.41",
     "discord.js": "^14.15.3",
     "mysql2": "^3.10.3",
     "pino": "^9.3.1",
     "pino-discord-webhook": "^0.1.1",
+    "pino-pretty": "^11.2.1",
     "sequelize": "^6.37.3",
     "topgg-autoposter": "^2.0.2"
   },
@@ -38,7 +40,6 @@
     "@types/eslint__js": "^8.42.3",
     "eslint": "^8.57.0",
     "nodemon": "^3.1.4",
-    "pino-pretty": "^11.2.1",
     "typescript": "^5.5.3",
     "typescript-eslint": "^7.16.1"
   }

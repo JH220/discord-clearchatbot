@@ -1,4 +1,7 @@
 node_modules/
 dist/
 config.json
+config.docker.json
 ccbot.log
+db-data/
+docker-compose.y*ml

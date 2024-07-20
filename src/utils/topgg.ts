@@ -1,6 +1,6 @@
 const { AutoPoster } = require('topgg-autoposter');
 const { Webhook } = require('@top-gg/sdk');
-const { topgg } = require('../config.json');
+const { topgg } = require('../../config.json');
 
 module.exports = {
 	async start(client, logger) {

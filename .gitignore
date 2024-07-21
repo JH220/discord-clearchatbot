@@ -5,3 +5,4 @@ config.docker.json
 ccbot.log
 db-data/
 docker-compose.y*ml
+update.sh

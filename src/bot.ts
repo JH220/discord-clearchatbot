@@ -22,7 +22,7 @@ export class CustomClient extends Client implements Logger {
 	}
 
 	ierror(interaction : Interaction, error : Error = null, message : string = '') {
-		this.error(`[Interaction ${interaction.id}] ${message ? message : 'Error while executing interaction'}: ${error}${error?.stack ? `\n${error.stack}` : ''}`);
+		this.error(`[Interaction ${interaction.id}] ${message ?? 'Error while executing interaction'}: ${error}${error?.stack ? `\n${error.stack}` : ''}`);
 	}
 	idebug(interaction : Interaction, message : string) {
 		this.debug(`[Interaction ${interaction.id}] ${message}`);
@@ -44,6 +44,7 @@ process.on('message', (message : any) => {
 	if (message?.type == 'started' && !client.startup) {
 		client.debug('Received startup message, now in full operation.');
 		client.startup = new Date();
+		require('./utils/activity-manager').startActivity(client);
 	}
 });
 

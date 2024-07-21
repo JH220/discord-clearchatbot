@@ -163,8 +163,10 @@ module.exports = class database {
 	async getMessage(key : string, interaction: DInteraction = null, args : { [key: string]: string } = null) : Promise<string> {
 		const messages = require('../../messages.json');
 
-		if (!Object.prototype.hasOwnProperty.call(messages, key))
+		if (!Object.prototype.hasOwnProperty.call(messages, key)) {
+			this.logger.debug(`Message ${key} not found in messages.json.`);
 			throw 'INVALID_KEY';
+		}
 
 		let message : string = messages[key];
 
@@ -176,6 +178,7 @@ module.exports = class database {
 			message = message.replace(/{INTERACTION_ID}/g, interaction.id);
 			if (interaction.channel) message = message.replace(/{CHANNEL_ID}/g, interaction.channel.id).replace(/{CHANNEL_NAME}/g, interaction.channel.name);
 			message = message.replace(/{USER_ID}/g, interaction.user.id).replace(/{USER_NAME}/g, interaction.user.username);
+			message = message.replace(/{USER}/g, `<@${interaction.user.id}>`);
 
 			if (interaction.inGuild()) {
 				message = message.replace(/{SHARD_ID}/g, (interaction.guild.shardId + 1).toString());

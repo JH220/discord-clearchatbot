@@ -6,16 +6,6 @@ module.exports = {
 	async execute(interaction : ChatInputCommandInteraction, database : any, server : any) {
 		const models = (database.connection as Sequelize).models;
 
-		/*
-		Error [ERR_UNHANDLED_ERROR]: Unhandled error. ('INVALID_KEY')
-    at new NodeError (node:internal/errors:406:5)
-    at CustomClient.emit (node:events:503:17)
-    at emitUnhandledRejectionOrErr (node:events:397:10)
-    at process.processTicksAndRejections (node:internal/process/task_queues:84:21) {
-  code: 'ERR_UNHANDLED_ERROR',
-  context: 'INVALID_KEY'
-}
-  */
 		const bin = (+server.serverId).toString(2);
 		const diff = 64 - (+server.serverId).toString(2).length;
 		const created = parseInt(bin.substring(0, 42 - diff), 2) + 1420070400000;
@@ -25,7 +15,7 @@ module.exports = {
 
 		await interaction.reply({ embeds: [ new EmbedBuilder()
 			.setColor('#00FFFF')
-			.setTitle('ClearChat-Bot Admin Server Information 📊')
+			.setTitle(await database.getMessage('COMMAND_ADMIN_GET_SERVER_EMBED_TITLE', interaction))
 			.setDescription(await database.getMessage('COMMAND_ADMIN_GET_SERVER_EMBED', interaction))
 			.setImage(`https://cdn.discordapp.com/icons/${server.serverId}/${server.serverPicture}.webp`)
 			.addFields(

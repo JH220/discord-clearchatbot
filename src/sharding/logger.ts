@@ -49,6 +49,6 @@ if (log.logtail)
 		},
 	];
 
-const logger : Logger = pino({ level: log.level }, pino.transport(transport));
+const logger : Logger = pino({ level: 'debug' }, pino.transport(transport));
 
 export default logger;

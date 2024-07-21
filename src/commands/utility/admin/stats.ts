@@ -16,7 +16,7 @@ module.exports = {
 
 		const embed = new EmbedBuilder()
 			.setColor('#00FFFF')
-			.setTitle('ClearChat-Bot Admin Stats 📊')
+			.setTitle(await database.getMessage('COMMAND_ADMIN_STATS_EMBED_TITLE', interaction))
 			.addFields(
 				{ name: 'Servers', value: `${serverCountString} servers`, inline: true },
 				{ name: 'Members', value: `${memberCountString} members`, inline: true },

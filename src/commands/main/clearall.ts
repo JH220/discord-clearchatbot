@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { ChannelType, ChatInputCommandInteraction, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
 import { CustomClient } from '../../bot';
+import { Sequelize } from 'sequelize';
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -26,6 +27,9 @@ module.exports = {
 		else if (!member.permissions.has(PermissionsBitField.Flags.ManageChannels))
 			return await database.reply(interaction, 'COMMAND_CLEARALL_MISSING_GUILD_PERM', { 'PERMISSION': 'Manage Channels' });
 
+		if (!interaction.channel.deletable)
+			return await database.reply(interaction, 'COMMAND_CLEARALL_DELETE_ERROR');
+
 		var channel;
 
 		try {
@@ -38,11 +42,14 @@ module.exports = {
 		}
 
 		await database.reply(interaction, 'COMMAND_CLEARALL_PENDING', {}, false);
+		await database.reply(interaction, 'COMMAND_CLEARALL_SUCCESS', { 'CHANNEL': `<#${channel.id}>` }, false);
+
+
+		const settings : any = await (database.connection as Sequelize).models.ServerSetting.findOne({ where: { serverId: interaction.guildId } });
+		if (!(settings?.showreply ?? true)) return;
 
 		try {
-			const message = await database.getMessage('COMMAND_CLEARALL_SUCCESS', interaction, { 'USER': `<@${interaction.user.id}>` });
-			channel.send(message);
-			await database.reply(interaction, 'COMMAND_CLEARALL_SUCCESS', { 'CHANNEL': `<#${channel.id}>` }, false);
+			channel.send(await database.getMessage('COMMAND_CLEARALL_SUCCESS', interaction));
 		}
 		catch (error) {
 			await (interaction.client as CustomClient).ierror(interaction, error, 'Error while sending message to new channel');

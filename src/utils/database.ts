@@ -110,7 +110,7 @@ module.exports = class database {
 		let server : Model = await Server.findOne({ where: { serverId: guild.id } });
 
 		const iconURL = guild.iconURL();
-		const icon = iconURL.substring(iconURL.lastIndexOf('/') + 1, iconURL.lastIndexOf('.'));
+		const icon = iconURL ? iconURL.substring(iconURL.lastIndexOf('/') + 1, iconURL.lastIndexOf('.')) : null;
 
 		if (!server) {
 			server = await Server.create({
@@ -142,7 +142,7 @@ module.exports = class database {
 		let dbUser : Model = await User.findOne({ where: { userId: user.id } });
 
 		const avatarURL = user.displayAvatarURL();
-		const avatar = avatarURL.substring(avatarURL.lastIndexOf('/') + 1, avatarURL.lastIndexOf('.'));
+		const avatar = avatarURL ? avatarURL.substring(avatarURL.lastIndexOf('/') + 1, avatarURL.lastIndexOf('.')) : null;
 
 		if (!dbUser) {
 			dbUser = await User.create({

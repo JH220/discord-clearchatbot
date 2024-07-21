@@ -7,7 +7,10 @@ module.exports = {
 	execute(client : CustomClient) {
 		new (require('../utils/database'))().setup(client);
 
-		setInterval(() => setActivity(client), 30000);
+		// Waiting 15 minutes to compensate for the time it takes to start all shards (in addition to the client.startup check)
+		setTimeout(() => {
+			setInterval(() => setActivity(client), 30000);
+		}, 15 * 60 * 1000);
 	},
 };
 

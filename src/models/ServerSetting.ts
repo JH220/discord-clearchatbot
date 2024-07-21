@@ -6,7 +6,7 @@ module.exports = class ServerSetting extends Model {
 	static init(sequelize : Sequelize) {
 		return super.init({
 			serverId: {
-				type: DataTypes.STRING(18),
+				type: DataTypes.STRING(30),
 				primaryKey: true,
 			},
 			showreply: { type: DataTypes.BOOLEAN },

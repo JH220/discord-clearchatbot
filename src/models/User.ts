@@ -11,7 +11,6 @@ module.exports = class User extends Model {
 			},
 			userName: { type: DataTypes.STRING(64) },
 			userPicture: { type: DataTypes.STRING },
-			created: { type: DataTypes.DATE },
 		}, {
 			tableName: 'users',
 			sequelize,

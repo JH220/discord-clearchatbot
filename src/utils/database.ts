@@ -61,9 +61,7 @@ module.exports = class database {
 		return dbInteraction;
 	}
 
-	async reply(interaction : ChatInputCommandInteraction, result : string, args : { [key: string]: string } = null, reply : boolean = true) : Promise<boolean> {
-		if (!interaction.isChatInputCommand()) return false;
-
+	async reply(interaction : DInteraction, result : string, args : { [key: string]: string } = null, reply : boolean = true) : Promise<boolean> {
 		const Interaction = this.connection.models.Interaction;
 		const dbInteraction : Model = await Interaction.findOne({ where: { interactionId: interaction.id } });
 
@@ -94,7 +92,7 @@ module.exports = class database {
 		}
 
 		try {
-			if (interaction.deferred) await interaction.editReply(message);
+			if (interaction.isChatInputCommand() && (interaction as ChatInputCommandInteraction).deferred) await interaction.editReply(message);
 			else if (interaction.isRepliable()) await interaction.reply({ content: message, ephemeral: true });
 			else return false;
 		}
@@ -111,12 +109,14 @@ module.exports = class database {
 		const Server = this.connection.models.Server;
 		let server : Model = await Server.findOne({ where: { serverId: guild.id } });
 
+		const iconURL = guild.iconURL();
+		const icon = iconURL.substring(iconURL.lastIndexOf('/') + 1, iconURL.lastIndexOf('.'));
+
 		if (!server) {
 			server = await Server.create({
 				serverId: guild.id,
 				serverName: guild.name,
-				serverPicture: guild.iconURL(),
-				created: guild.createdTimestamp,
+				serverPicture: icon,
 				shardId: guild.shardId + 1,
 				invites: JSON.stringify(await getInvites(guild)),
 				memberCount: guild.memberCount,
@@ -127,7 +127,7 @@ module.exports = class database {
 		}
 		else server.update({
 			serverName: guild.name,
-			serverPicture: guild.iconURL(),
+			serverPicture: icon,
 			shardId: guild.shardId + 1,
 			invites: JSON.stringify(await getInvites(guild)),
 			memberCount: guild.memberCount,
@@ -141,18 +141,20 @@ module.exports = class database {
 		const User = this.connection.models.User;
 		let dbUser : Model = await User.findOne({ where: { userId: user.id } });
 
+		const avatarURL = user.displayAvatarURL();
+		const avatar = avatarURL.substring(avatarURL.lastIndexOf('/') + 1, avatarURL.lastIndexOf('.'));
+
 		if (!dbUser) {
 			dbUser = await User.create({
 				userId: user.id,
 				userName: user.username,
-				userPicture: user.displayAvatarURL(),
-				created: user.createdTimestamp,
+				userPicture: avatar,
 			});
 			this.logger.debug(`User ${user.id} added to database.`);
 		}
 		else dbUser.update({
 			userName: user.username,
-			userPicture: user.displayAvatarURL(),
+			userPicture: avatar,
 		});
 
 		return dbUser;
@@ -168,29 +170,28 @@ module.exports = class database {
 
 		if (args)
 			for (const arg in args)
-				message = message.replace(`{${arg}}`, args[arg]);
+				message = message.replace(new RegExp(`{${arg}}`, 'g'), args[arg]);
 
-		const missingArgs = message.matchAll(/{(\w+)}/g);
-		const missing : boolean = !missingArgs.next().done;
-		for (const match of missingArgs) {
-			const arg = match[1];
-			this.logger.warn(`${interaction ? '[Interaction ${interaction.id}] ' : ''}Message ${key} is missing argument "${arg}".`);
-		}
-
-		if (interaction && missing) {
-			message = message.replace('{INTERACTION_ID}', interaction.id);
-			if (interaction.channel) message = message.replace('{CHANNEL_ID}', interaction.channel.id).replace('{CHANNEL_NAME}', interaction.channel.name);
-			message = message.replace('{USER_ID}', interaction.user.id).replace('{USER_NAME}', interaction.user.username);
+		if (interaction) {
+			message = message.replace(/{INTERACTION_ID}/g, interaction.id);
+			if (interaction.channel) message = message.replace(/{CHANNEL_ID}/g, interaction.channel.id).replace(/{CHANNEL_NAME}/g, interaction.channel.name);
+			message = message.replace(/{USER_ID}/g, interaction.user.id).replace(/{USER_NAME}/g, interaction.user.username);
 
 			if (interaction.inGuild()) {
-				message = message.replace('{SHARD_ID}', (interaction.guild.shardId + 1).toString());
-				message = message.replace('{GUILD_ID}', interaction.guild.id).replace('{SERVER_NAME}', interaction.guild.name);
+				message = message.replace(/{SHARD_ID}/g, (interaction.guild.shardId + 1).toString());
+				message = message.replace(/{GUILD_ID}/g, interaction.guild.id).replace(/{SERVER_ID}/g, interaction.guild.id).replace(/{SERVER_NAME}/g, interaction.guild.name);
 			}
 
 			if (interaction.isCommand()) {
-				message = message.replace('{COMMAND_NAME}', interaction.commandName);
-				message = message.replace('{COMMAND_ID}', interaction.commandId);
+				message = message.replace(/{COMMAND_NAME}/g, interaction.commandName);
+				message = message.replace(/{COMMAND_ID}/g, interaction.commandId);
 			}
+		}
+
+		const missingArgs = message.matchAll(/{(\w+)}/g);
+		for (const match of missingArgs) {
+			const arg = match[1];
+			this.logger.warn(`${interaction ? `[Interaction ${interaction.id}] ` : ''}Message ${key} is missing argument "${arg}".`);
 		}
 
 		return message;

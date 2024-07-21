@@ -3,7 +3,7 @@ import { Logger } from './utils/logger';
 
 export class CustomClient extends Client implements Logger {
 	commands: Collection<string, any>;
-	startup: boolean;
+	startup: Date;
 
 	log(message : string) {
 		this._sendLog('info', message);
@@ -34,7 +34,7 @@ export class CustomClient extends Client implements Logger {
 }
 
 const client: CustomClient = new CustomClient({ intents: [GatewayIntentBits.Guilds] });
-client.startup = false;
+client.startup = null;
 
 import fileLoader from './utils/file-loader';
 fileLoader.loadCommands(client);
@@ -43,7 +43,7 @@ fileLoader.loadEvents(client);
 process.on('message', (message : any) => {
 	if (message?.type == 'started' && !client.startup) {
 		client.debug('Received startup message, now in full operation.');
-		client.startup = true;
+		client.startup = new Date();
 	}
 });
 

@@ -25,24 +25,31 @@ module.exports = {
 		case 'get': {
 			const id = interaction.options.getString('id');
 
-			let entry = await models.GuildBan.findOne({ where: { banId: id.replace(/^BG/, '') } });
-			if (entry) return require('./admin/get/guildban').execute(interaction, entry);
-
-			entry = await models.Interaction.findOne({ where: { interactionId: id } });
-			if (entry) return require('./admin/get/interaction').execute(interaction, entry);
-
-			entry = await models.Server.findOne({ where: { serverId: id } });
-			if (entry) return require('./admin/get/server').execute(interaction, entry);
+			let entry : any = await models.Interaction.findOne({ where: { interactionId: id } });
+			if (entry) return require('./admin/get/interaction').execute(interaction, database, entry);
 
 			entry = await models.User.findOne({ where: { userId: id } });
-			if (entry) return require('./admin/get/user').execute(interaction, entry);
+			if (entry) return require('./admin/get/user').execute(interaction, database, entry);
+
+			entry = await models.Server.findOne({ where: { serverId: id } });
+			if (entry) return require('./admin/get/server').execute(interaction, database, entry);
 
 			entry = await models.UserBan.findOne({ where: { banId: id.replace(/^BU/, '') } });
-			if (entry) return require('./admin/get/userban.js').execute(interaction, entry);
+			if (entry) {
+				const user = await models.User.findOne({ where: { userId: entry.userId } });
+				return require('./admin/get/user').execute(interaction, database, user);
+			}
+
+			entry = await models.ServerBan.findOne({ where: { banId: id.replace(/^BG/, '') } });
+			if (entry) {
+				const server = await models.Server.findOne({ where: { serverId: entry.serverId } });
+				return require('./admin/get/server').execute(interaction, database, server);
+			}
 
 			return database.reply(interaction, 'COMMAND_ADMIN_INVALID_ID', { 'ID': id });
 		}
-		case 'stats': return require('./admin/stats').execute(interaction);
+		case 'stats': return require('./admin/stats').execute(interaction, database);
+		case 'ban': return require('./admin/ban').execute(interaction, database);
 		}
 	},
 };

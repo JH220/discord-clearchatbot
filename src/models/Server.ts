@@ -11,7 +11,6 @@ module.exports = class Server extends Model {
 			},
 			serverName: { type: DataTypes.STRING(100) },
 			serverPicture: { type: DataTypes.STRING },
-			created: { type: DataTypes.DATE },
 			shardId: { type: DataTypes.INTEGER },
 			invites: { type: DataTypes.TEXT },
 			memberCount: { type: DataTypes.INTEGER },

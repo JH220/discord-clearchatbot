@@ -19,6 +19,7 @@ module.exports = {
 		.addBooleanOption(option => option.setName('bot').setDescription('Filter messages sent by bots')),
 	/** @param {import('discord.js').CommandInteraction} interaction */
 	async execute(interaction : ChatInputCommandInteraction) {
+		interaction.deferReply({ ephemeral: true });
 		const database = new (require('../../utils/database'))();
 		const amount = interaction.options.getInteger('amount') || 100;
 

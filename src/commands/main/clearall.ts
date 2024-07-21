@@ -10,6 +10,7 @@ module.exports = {
 		.setDMPermission(false),
 	/** @param {import('discord.js').CommandInteraction} interaction */
 	async execute(interaction : ChatInputCommandInteraction) {
+		interaction.deferReply({ ephemeral: true });
 		const database = new (require('../../utils/database'))();
 
 		if (interaction.channel.type !== ChannelType.GuildText)

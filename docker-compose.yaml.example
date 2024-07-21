@@ -8,6 +8,7 @@ services:
       - 1337:1337
     volumes:
       - ./config.json:/usr/src/app/config.json:ro
+      - ./messages.json:/usr/src/app/messages.json:ro
       - ./ccbot.log:/usr/src/app/ccbot.log:rw
     depends_on:
       - db

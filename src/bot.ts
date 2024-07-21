@@ -40,10 +40,12 @@ import fileLoader from './utils/file-loader';
 fileLoader.loadCommands(client);
 fileLoader.loadEvents(client);
 
+process.on('message', (message : any) => {
+	if (message?.type == 'started') {
+		client.debug('Received startup message, now in full operation.');
+		client.startup = true;
+	}
+});
+
 const token : string = require('../config.json').token;
 client.login(token);
-
-// when sharding manager sends message
-process.on('message', (message : any) => {
-	if (message?.type == 'started') client.startup = true;
-});

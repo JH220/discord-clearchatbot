@@ -11,7 +11,7 @@ const transport : TransportMultiOptions = {
 	targets: [
 		{
 			target: 'pino/file',
-			level: log.level,
+			level: 'debug',
 			options: { destination: './ccbot.log' },
 		},
 		{
@@ -42,7 +42,7 @@ if (log.logtail)
 		...transport.targets,
 		{
 			target: '@logtail/pino',
-			level: log.level,
+			level: 'debug',
 			options: {
 				sourceToken: log.logtail,
 			},

@@ -41,7 +41,7 @@ fileLoader.loadCommands(client);
 fileLoader.loadEvents(client);
 
 process.on('message', (message : any) => {
-	if (message?.type == 'started') {
+	if (message?.type == 'started' && !client.startup) {
 		client.debug('Received startup message, now in full operation.');
 		client.startup = true;
 	}

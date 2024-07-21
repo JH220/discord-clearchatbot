@@ -30,12 +30,8 @@ module.exports = {
 		await database.reply(interaction, 'COMMAND_CLEARALL_PENDING', {}, false);
 
 		try {
-			const message = database.getMessage('COMMAND_CLEARALL_SUCCESS', interaction, { 'USER': `<@${interaction.user.id}>` });
-			if (message)
-				await channel.send(message);
-			else {
-				await (interaction.client as CustomClient).warn(`[Interaction ${interaction.id}] Message empty for key "COMMAND_CLEARALL_SUCCESS" and user "${interaction.user.id}".`);
-			}
+			const message = await database.getMessage('COMMAND_CLEARALL_SUCCESS', interaction, { 'USER': `<@${interaction.user.id}>` });
+			channel.send(message);
 			await database.reply(interaction, 'COMMAND_CLEARALL_SUCCESS', { 'CHANNEL': `<#${channel.id}>` }, false);
 		}
 		catch (error) {

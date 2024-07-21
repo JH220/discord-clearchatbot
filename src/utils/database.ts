@@ -28,17 +28,17 @@ module.exports = class database {
 		else
 			this.connection = await new Sequelize(connectionString, { logging: msg => logger.trace('[Sequelize] ' + msg) });
 
-		logger.debug('Syncing models...');
+		logger.debug('[Database] Syncing models...');
 		const modelFiles = require('node:fs').readdirSync('./dist/models').filter(file => file.endsWith('.js'));
 		for (const file of modelFiles) {
-			logger.debug(`Syncing model ${file}`);
+			logger.debug(`[Database] Syncing model ${file}`);
 			const modelFile : any = require(`../models/${file}`);
 			await modelFile.init(this.connection);
 			await modelFile.sync({ alter: true });
 		}
-		logger.debug('Models synced.');
+		logger.debug('[Database] Models synced.');
 
-		logger.debug('Database setup complete.');
+		logger.debug('[Database] Database setup complete.');
 		return this.connection;
 	}
 

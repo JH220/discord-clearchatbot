@@ -27,7 +27,7 @@ export default {
 		});
 		shard.on('ready', () => {
 			const time : string = (Date.now() - start).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
-			childLogger.info(`Started! Startup process took ${time}ms`);
+			childLogger.info(`Started! Startup process took ${time} ms.`);
 			shard.fetchClientValue('guilds.cache.size').then(count => {
 				childLogger.info(`Managing ${count} guild${count != 1 ? 's' : ''}.`);
 			});

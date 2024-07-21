@@ -3,6 +3,7 @@ import { Logger } from './utils/logger';
 
 export class CustomClient extends Client implements Logger {
 	commands: Collection<string, any>;
+	startup: boolean;
 
 	log(message : string) {
 		this._sendLog('info', message);
@@ -33,6 +34,7 @@ export class CustomClient extends Client implements Logger {
 }
 
 const client: CustomClient = new CustomClient({ intents: [GatewayIntentBits.Guilds] });
+client.startup = false;
 
 import fileLoader from './utils/file-loader';
 fileLoader.loadCommands(client);
@@ -40,3 +42,8 @@ fileLoader.loadEvents(client);
 
 const token : string = require('../config.json').token;
 client.login(token);
+
+// when sharding manager sends message
+process.on('message', (message : any) => {
+	if (message?.type == 'started') client.startup = true;
+});

@@ -8,6 +8,11 @@ module.exports = {
 	async execute(interaction : ChatInputCommandInteraction) {
 		const database = new (require('../../utils/database'))();
 
+		if (!((interaction.client) as CustomClient).startup) {
+			await database.reply(interaction, 'COMMAND_STATS_STILL_STARTING');
+			return;
+		}
+
 		const serverCount = (await interaction.client.shard.fetchClientValues('guilds.cache.size')).reduce((acc : number, guildCount : number) => acc + guildCount, 0);
 		const serverCountString = serverCount.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
 		const memberCount = await interaction.client.shard.broadcastEval(c => c.guilds.cache.reduce((acc : number, guild : Guild) => acc + guild.memberCount, 0));

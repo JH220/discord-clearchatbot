@@ -49,7 +49,7 @@ module.exports = {
 
 		try {
 			const messages = await interaction.channel.bulkDelete(fetched, true);
-			await database.reply(interaction, 'COMMAND_CLEAR_SUCCESS', { 'AMOUNT': messages.size, 's': messages.size == 1 ? '' : 's' }, false);
+			await database.reply(interaction, 'COMMAND_CLEAR_SUCCESS', { 'AMOUNT': messages.size, 's': messages.size == 1 ? '' : 's' });
 		}
 		catch (error) {
 			(interaction.client as CustomClient).ierror(interaction, error, 'Error while bulk deleting messages');

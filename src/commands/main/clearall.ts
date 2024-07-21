@@ -27,15 +27,19 @@ module.exports = {
 			return await database.reply(interaction, 'COMMAND_CLEARALL_ERROR');
 		}
 
-		await database.reply(interaction, 'COMMAND_CLEARALL_PENDING');
+		await database.reply(interaction, 'COMMAND_CLEARALL_PENDING', {}, false);
 
 		try {
 			const message = database.getMessage('COMMAND_CLEARALL_SUCCESS', interaction, { 'USER': `<@${interaction.user.id}>` });
-			await channel.send(message);
+			if (message)
+				await channel.send(message);
+			else {
+				await (interaction.client as CustomClient).warn(`[Interaction ${interaction.id}] Message empty for key "COMMAND_CLEARALL_SUCCESS" and user "${interaction.user.id}".`);
+			}
 			await database.reply(interaction, 'COMMAND_CLEARALL_SUCCESS', { 'CHANNEL': `<#${channel.id}>` }, false);
 		}
 		catch (error) {
-			(interaction.client as CustomClient).ierror(interaction, error, 'Error while sending message to new channel');
+			await (interaction.client as CustomClient).ierror(interaction, error, 'Error while sending message to new channel');
 			await database.reply(interaction, 'COMMAND_CLEARALL_MESSAGE_ERROR', {}, false);
 		}
 	},

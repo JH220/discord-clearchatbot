@@ -28,9 +28,16 @@ module.exports = {
 			await database.addInteraction(interaction);
 		}
 		catch (error) {
-			client.error(`[Interaction ${interaction.id}] Failed to add interaction to the database`);
-			interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-			return;
+			client.ierror(interaction, error, 'Error while adding interaction to the database (1)');
+			try {
+				await database.addInteraction(interaction);
+				client.warn(`[Interaction ${interaction.id}] Interaction was added to the database after a second attempt.`);
+			}
+			catch (error2) {
+				client.ierror(interaction, error2, 'Error while adding interaction to the database (2)');
+				interaction.reply({ content: 'There was an error while executing this command!\nPlease try again later.', ephemeral: true });
+				return;
+			}
 		}
 
 		const bannedUser = await models.UserBan.findOne({ where: { userId: interaction.user.id, pardonModId: null } });

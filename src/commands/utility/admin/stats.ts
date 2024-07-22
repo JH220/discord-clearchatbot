@@ -16,7 +16,7 @@ module.exports = {
 
 		const embed = new EmbedBuilder()
 			.setColor('#00FFFF')
-			.setTitle(await database.getMessage('COMMAND_ADMIN_STATS_EMBED_TITLE', interaction))
+			.setTitle(await database.getMessage('COMMAND_ADMIN_STATS_EMBED_TITLE', interaction) ?? 'COMMAND_ADMIN_STATS_EMBED_TITLE')
 			.addFields(
 				{ name: 'Servers', value: `${serverCountString} servers`, inline: true },
 				{ name: 'Members', value: `${memberCountString} members`, inline: true },
@@ -26,7 +26,6 @@ module.exports = {
 			);
 		await interaction.reply({ embeds: [embed] });
 		await database.reply(interaction, 'COMMAND_ADMIN_STATS_SUCCESS', {}, false);
-		await (interaction.client as CustomClient).idebug(interaction, 'Replied to stats command.');
 	},
 };
 

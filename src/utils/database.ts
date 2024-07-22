@@ -48,13 +48,15 @@ module.exports = class database {
 		await this.updateUser(interaction.user);
 		if (interaction.inGuild()) await this.updateServer(interaction.guild);
 
+		const command : string = interaction.isCommand() ? interaction.toString() : (interaction as any).customId;
+
 		const dbInteraction : Model = await Interaction.create({
 			interactionId: interaction.id,
 			serverId: interaction.inGuild() ? interaction.guildId : null,
 			channelId: interaction.channelId,
 			channelName: interaction.channel.type == ChannelType.GuildText ? interaction.channel.name : null,
 			userId: interaction.user.id,
-			command: interaction.toString(),
+			command: command,
 			result: 'WAITING_FOR_RESPONSE',
 		});
 		this.logger.debug(`[Interaction ${interaction.id}] Added to database.`);
@@ -81,12 +83,8 @@ module.exports = class database {
 			return true;
 		}
 
-		let message;
-
-		try {
-			message = await this.getMessage(result, interaction, args);
-		}
-		catch (error) {
+		let message = await this.getMessage(result, interaction, args);
+		if (!message) {
 			this.logger.warn(`[Interaction ${interaction.id}] Message ${result} not found in messages.json.`);
 			message = result;
 		}
@@ -132,6 +130,7 @@ module.exports = class database {
 			invites: JSON.stringify(await getInvites(guild)),
 			memberCount: guild.memberCount,
 			ownerId: guild.ownerId,
+			botLeave: null,
 		});
 
 		return server;
@@ -165,7 +164,7 @@ module.exports = class database {
 
 		if (!Object.prototype.hasOwnProperty.call(messages, key)) {
 			this.logger.debug(`Message ${key} not found in messages.json.`);
-			throw 'INVALID_KEY';
+			return null;
 		}
 
 		let message : string = messages[key];

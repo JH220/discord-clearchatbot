@@ -1,6 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, StringSelectMenuOptionBuilder } from 'discord.js';
-import { CustomClient } from '../../bot';
 import { Sequelize } from 'sequelize';
 
 module.exports = {
@@ -23,18 +22,17 @@ module.exports = {
 			);
 		const resetButton = new ButtonBuilder()
 			.setCustomId('settings_reset')
-			.setLabel(await database.getMessage('COMMAND_SETTINGS_BUTTON_RESET_ALL', interaction))
+			.setLabel(await database.getMessage('COMMAND_SETTINGS_BUTTON_RESET_ALL', interaction) ?? 'COMMAND_SETTINGS_BUTTON_RESET_ALL')
 			.setStyle(ButtonStyle.Danger)
 			.setEmoji('🔄');
 
 		await interaction.reply({ embeds: [ new EmbedBuilder()
 			.setColor('#00FFFF')
-			.setTitle(await database.getMessage('COMMAND_SETTINGS_EMBED_TITLE', interaction))
-			.setDescription(await database.getMessage('COMMAND_SETTINGS_EMBED', interaction)),
+			.setTitle(await database.getMessage('COMMAND_SETTINGS_EMBED_TITLE', interaction) ?? 'COMMAND_SETTINGS_EMBED_TITLE')
+			.setDescription(await database.getMessage('COMMAND_SETTINGS_EMBED', interaction) ?? 'COMMAND_SETTINGS_EMBED'),
 		], components: [new ActionRowBuilder().addComponents(select) as any, new ActionRowBuilder().addComponents(resetButton)] });
 
 		await database.reply(interaction, 'COMMAND_SETTINGS_SUCCESS', {}, false);
-		await (interaction.client as CustomClient).idebug(interaction, 'Replied to settings command');
 	},
 	async executeButton(interaction : ButtonInteraction, database : any) {
 		const customId = interaction.customId.split(';')[0];

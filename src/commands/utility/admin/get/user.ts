@@ -1,16 +1,15 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, EmbedBuilder, Interaction, ModalBuilder, ModalSubmitInteraction, TextInputBuilder, TextInputStyle } from 'discord.js';
-import { CustomClient } from '../../../../bot';
 import { Sequelize } from 'sequelize';
 
 module.exports = {
 	async execute(interaction : ChatInputCommandInteraction, database : any, user : any) {
 		await interaction.reply(await getReply(interaction, user, database) as any);
 		await database.reply(interaction, 'COMMAND_ADMIN_GET_USER_SUCCESS', {}, false);
-		await (interaction.client as CustomClient).idebug(interaction, 'Replied to admin get user command.');
 	},
 	async executeButton(interaction : ButtonInteraction, database : any) {
 		switch (interaction.customId.split(';')[0]) {
 		case 'admin_get_user_servers': {
+			await interaction.reply(interaction.customId);
 			break;
 		}
 		case 'admin_get_user_ban': {
@@ -75,7 +74,7 @@ module.exports = {
 
 			var embed = new EmbedBuilder()
 				.setColor('#00FFFF')
-				.setTitle(await database.getMessage('INTERACTION_ADMIN_GET_USER_BAN_HISTORY_EMBED_TITLE', interaction))
+				.setTitle(await database.getMessage('INTERACTION_ADMIN_GET_USER_BAN_HISTORY_EMBED_TITLE', interaction) ?? 'INTERACTION_ADMIN_GET_USER_BAN_HISTORY_EMBED_TITLE')
 				.setDescription(description);
 			const banButton = await getBanButton(interaction, userId, database);
 
@@ -104,7 +103,7 @@ module.exports = {
 			await models.UserBan.create({ userId: userId, reason: reason, modId: modId });
 			const { embeds, components } = await getReply(interaction, user, database);
 			await interaction.reply({
-				content: await database.getMessage('INTERACTION_ADMIN_GET_USER_BAN_SUCCESS', interaction, { 'BAN_USER': `<@${userId}>` }),
+				content: await database.getMessage('INTERACTION_ADMIN_GET_USER_BAN_SUCCESS', interaction, { 'BAN_USER': `<@${userId}>` }) ?? 'INTERACTION_ADMIN_GET_USER_BAN_SUCCESS',
 				embeds: embeds, components: components as any,
 			});
 			await database.reply(interaction, 'INTERACTION_ADMIN_GET_USER_BAN_SUCCESS', { 'USER_ID': userId }, false);
@@ -127,7 +126,7 @@ module.exports = {
 			await ban.update({ pardonReason: pardonReason, pardonModId: pardonModId });
 			const { embeds, components } = await getReply(interaction, user, database);
 			await interaction.reply({
-				content: await database.getMessage('INTERACTION_ADMIN_GET_USER_PARDON_SUCCESS', interaction, { 'BAN_USER': `<@${ban.userId}>` }),
+				content: await database.getMessage('INTERACTION_ADMIN_GET_USER_PARDON_SUCCESS', interaction, { 'BAN_USER': `<@${ban.userId}>` }) ?? 'INTERACTION_ADMIN_GET_USER_PARDON_SUCCESS',
 				embeds: embeds, components: components as any,
 			});
 			await database.reply(interaction, 'INTERACTION_ADMIN_GET_USER_PARDON_SUCCESS', { USER_ID: ban.userId }, false);
@@ -135,6 +134,8 @@ module.exports = {
 		}
 		}
 	},
+	getReply,
+	getBanButton,
 };
 
 async function getReply(interaction : Interaction, user: any, database : any) : Promise<{ embeds: [EmbedBuilder], components: [ActionRowBuilder] }> {
@@ -148,8 +149,8 @@ async function getReply(interaction : Interaction, user: any, database : any) : 
 
 	const embed = new EmbedBuilder()
 		.setColor('#00FFFF')
-		.setTitle(await database.getMessage('INTERACTION_ADMIN_GET_OVERVIEW_EMBED_TITLE', interaction))
-		.setDescription(await database.getMessage('COMMAND_ADMIN_GET_USER_EMBED', interaction))
+		.setTitle(await database.getMessage('INTERACTION_ADMIN_GET_USER_EMBED_TITLE', interaction) ?? 'INTERACTION_ADMIN_GET_USER_EMBED_TITLE')
+		.setDescription(await database.getMessage('INTERACTION_ADMIN_GET_USER_EMBED', interaction) ?? 'INTERACTION_ADMIN_GET_USER_EMBED')
 		.setImage(`https://cdn.discordapp.com/avatars/${user.userId}/${user.userPicture}.webp`)
 		.addFields(
 			{ name: 'User ID', value: user.userId, inline: false },
@@ -174,11 +175,8 @@ async function getReply(interaction : Interaction, user: any, database : any) : 
 		.setStyle(ButtonStyle.Secondary)
 		.setEmoji('📜');
 
-	const row = new ActionRowBuilder().addComponents(
-		viewServersButton,
-		banButton,
-		ban ? banHistoryButton : null,
-	);
+	const row = new ActionRowBuilder().addComponents(viewServersButton, banButton);
+	if (ban) row.addComponents(banHistoryButton);
 
 	return { embeds: [embed], components: [row] };
 }

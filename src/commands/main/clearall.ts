@@ -23,6 +23,8 @@ module.exports = {
 		if (interaction.channel.parent) {
 			if (!member.permissionsIn(interaction.channel.parent).has(PermissionsBitField.Flags.ManageChannels))
 				return await database.reply(interaction, 'COMMAND_CLEARALL_MISSING_CATEGORY_PERM', { 'PERMISSION': 'Manage Channels' });
+			if (interaction.channel.parent.children.cache.size >= 50)
+				return await database.reply(interaction, 'COMMAND_CLEARALL_CATEGORY_FULL');
 		}
 		else if (!member.permissions.has(PermissionsBitField.Flags.ManageChannels))
 			return await database.reply(interaction, 'COMMAND_CLEARALL_MISSING_GUILD_PERM', { 'PERMISSION': 'Manage Channels' });
@@ -49,7 +51,8 @@ module.exports = {
 		if (!(settings?.showreply ?? true)) return;
 
 		try {
-			channel.send(await database.getMessage('COMMAND_CLEARALL_SUCCESS', interaction));
+			const message = await database.getMessage('COMMAND_CLEARALL_SUCCESS', interaction);
+			if (message) channel.send(message);
 		}
 		catch (error) {
 			await (interaction.client as CustomClient).ierror(interaction, error, 'Error while sending message to new channel');

@@ -11,11 +11,10 @@ module.exports = {
 
 		await interaction.reply({ embeds: [ new EmbedBuilder()
 			.setColor('#00FFFF')
-			.setTitle(await database.getMessage('COMMAND_VOTE_EMBED_TITLE', interaction))
-			.setDescription(await database.getMessage('COMMAND_VOTE_EMBED', interaction)),
+			.setTitle(await database.getMessage('COMMAND_VOTE_EMBED_TITLE', interaction) ?? 'COMMAND_VOTE_EMBED_TITLE')
+			.setDescription(await database.getMessage('COMMAND_VOTE_EMBED', interaction) ?? 'COMMAND_VOTE_EMBED'),
 		] });
 
 		await database.reply(interaction, 'COMMAND_VOTE_SUCCESS', {}, false);
-		await (interaction.client as CustomClient).idebug(interaction, 'Replied to vote command.');
 	},
 };

@@ -49,7 +49,6 @@ module.exports = {
 			return database.reply(interaction, 'COMMAND_ADMIN_INVALID_ID', { 'ID': id });
 		}
 		case 'stats': return require('./admin/stats').execute(interaction, database);
-		case 'ban': return require('./admin/ban').execute(interaction, database);
 		}
 	},
 };

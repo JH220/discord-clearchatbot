@@ -10,11 +10,6 @@ interface LogConfig {
 const transport : TransportMultiOptions = {
 	targets: [
 		{
-			target: 'pino/file',
-			level: 'debug',
-			options: { destination: './ccbot.log' },
-		},
-		{
 			target: './pretty-logger',
 			level: log.level,
 			options: {

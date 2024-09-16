@@ -13,7 +13,7 @@ module.exports = {
 	async execute(interaction : ChatInputCommandInteraction) {
 		const database = new (require('../../utils/database'))();
 
-		if (interaction.channel.type !== ChannelType.GuildText)
+		if (interaction.channel?.type !== ChannelType.GuildText)
 			return await database.reply(interaction, 'COMMAND_CLEARALL_INVALID_CHANNEL');
 
 		// Checking permissions for cloning and deleting channel

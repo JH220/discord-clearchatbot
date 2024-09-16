@@ -54,7 +54,7 @@ module.exports = class database {
 			interactionId: interaction.id,
 			serverId: interaction.inGuild() ? interaction.guildId : null,
 			channelId: interaction.channelId,
-			channelName: interaction.channel.type == ChannelType.GuildText ? interaction.channel.name : null,
+			channelName: interaction.channel?.type == ChannelType.GuildText ? interaction.channel.name : null,
 			userId: interaction.user.id,
 			command: command,
 			result: 'WAITING_FOR_RESPONSE',

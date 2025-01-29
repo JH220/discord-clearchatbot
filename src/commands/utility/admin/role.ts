@@ -5,6 +5,11 @@ module.exports = {
 	async execute(interaction : ChatInputCommandInteraction, database : any) {
 		const client = (interaction.client as CustomClient);
 
+		if (!client.startup) {
+			await database.reply(interaction, 'COMMAND_ADMIN_ROLE_STILL_STARTING');
+			return;
+		}
+
 		const addB = interaction.options.getBoolean('add');
 		const gId = interaction.options.getString('guildid');
 		const rId = interaction.options.getString('roleid');

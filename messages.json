@@ -24,6 +24,7 @@
 	"INTERACTION_SETTINGS_RESET": "All settings have been reset to their default values.",
 	"INTERACTION_SETTINGS_TOGGLE_CONFIRMATION_MESSAGES": "Switched the setting for confirmation messages to {STATE}.",
 	"COMMAND_ADMIN_STATS_STILL_STARTING": "The statistics are still being collected.\nPlease try again later.",
+	"COMMAND_ADMIN_ROLE_STILL_STARTING": "The role management is still being loaded.\nPlease try again later.",
 	"COMMAND_ADMIN_STATS_EMBED_TITLE": "ClearChat-Bot Admin Stats 📊",
 	"COMMAND_ADMIN_ROLE_EMBED_TITLE": "ClearChat-Bot Role Management 🛠️",
 	"INTERACTION_ADMIN_GET_USER_BAN_SUCCESS": "The user {BAN_USER} has been banned.",

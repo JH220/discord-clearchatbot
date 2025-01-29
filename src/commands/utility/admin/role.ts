@@ -15,8 +15,7 @@ module.exports = {
 			if (!guild) return 'Guild not found.';
 			const role : Role = guild.roles.cache.get(roleId);
 			if (!role) return 'Role not found.';
-			await guild.members.fetch();
-			const member : GuildMember = guild.members.cache.get(userId);
+			const member : GuildMember = await guild.members.fetch(userId);
 			if (!member) return 'Member not found.';
 
 			if (!role.editable) return 'No permission.';

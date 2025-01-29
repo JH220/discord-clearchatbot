@@ -52,7 +52,10 @@ module.exports = {
 
 		try {
 			const message = await database.getMessage('COMMAND_CLEARALL_SUCCESS', interaction);
-			if (message) channel.send(message);
+			if (message) {
+				if (member.permissionsIn(channel).has(PermissionsBitField.Flags.SendMessages))
+					channel.send(message);
+			}
 		}
 		catch (error) {
 			await (interaction.client as CustomClient).ierror(interaction, error, 'Error while sending message to new channel');

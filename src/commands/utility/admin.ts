@@ -14,6 +14,14 @@ module.exports = {
 			.addStringOption(option => option.setName('id').setDescription('Enter an interaction, server, guild, user or ban ID here.').setRequired(true)),
 		)
 		.addSubcommand(subcommand => subcommand
+			.setName('role')
+			.setDescription('Adds or removes a role from a user.')
+			.addBooleanOption(option => option.setName('add').setDescription('Add or remove the role.').setRequired(true))
+			.addStringOption(option => option.setName('guildid').setDescription('The targeted guild.').setRequired(true))
+			.addStringOption(option => option.setName('roleid').setDescription('The role to add or remove.').setRequired(true))
+			.addStringOption(option => option.setName('userid').setDescription('The user to add or remove the role from.').setRequired(true)),
+		)
+		.addSubcommand(subcommand => subcommand
 			.setName('stats')
 			.setDescription('Shows statistics about the bot.'),
 		),
@@ -48,6 +56,7 @@ module.exports = {
 
 			return database.reply(interaction, 'COMMAND_ADMIN_INVALID_ID', { 'ID': id });
 		}
+		case 'role': return require('./admin/role').execute(interaction, database);
 		case 'stats': return require('./admin/stats').execute(interaction, database);
 		}
 	},

@@ -1,6 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
-import { CustomClient } from '../../bot';
 
 module.exports = {
 	data: new SlashCommandBuilder()

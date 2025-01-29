@@ -57,7 +57,7 @@ async function getReply(interaction : Interaction, entry: any, database : any) :
 	args['CHANNEL_ID'] = entry.channelId;
 	args['CHANNEL_NAME'] = entry.channelName ?? 'N/A';
 	args['USER_ID'] = entry.userId;
-	args['USER_NAME'] = '@' + user?.userName ?? 'N/A';
+	args['USER_NAME'] = user?.userName ? '@' + user?.userName : 'N/A';
 	args['USER'] = `<@${entry.userId}>`;
 	args['SHARD_ID'] = server?.shardId ?? 'N/A';
 	args['GUILD_ID'] = args['SERVER_ID'] = entry.serverId;

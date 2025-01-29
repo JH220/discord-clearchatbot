@@ -15,6 +15,7 @@ module.exports = {
 			if (!guild) return 'Guild not found.';
 			const role : Role = guild.roles.cache.get(roleId);
 			if (!role) return 'Role not found.';
+			await guild.members.fetch();
 			const member : GuildMember = guild.members.cache.get(userId);
 			if (!member) return 'Member not found.';
 
